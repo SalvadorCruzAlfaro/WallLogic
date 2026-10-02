@@ -1,0 +1,533 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Manual WallLogic</title>
+<meta name="description" content="Guía paso a paso de la app móvil WallLogic: crear cuenta, configurar precios, cotizar muros y closets, y más.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #f6f4f0;
+    --surface: #ffffff;
+    --surface-2: #efeae1;
+    --border: #e2dccf;
+    --text: #241f2e;
+    --text-mid: #5b5468;
+    --text-low: #8b8496;
+    --accent: #6653e0;
+    --accent-ink: #ffffff;
+    --accent-soft: #eee9ff;
+    --good: #1f8a5f;
+    --warn: #b5711b;
+    --mono-bg: #efeade;
+    --shadow: 0 1px 2px rgba(40,30,60,0.06), 0 8px 24px -12px rgba(40,30,60,0.18);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg: #17141f;
+      --surface: #1f1b2b;
+      --surface-2: #262133;
+      --border: #332c46;
+      --text: #eee9f8;
+      --text-mid: #b6adca;
+      --text-low: #8479a0;
+      --accent: #9a8bff;
+      --accent-ink: #17141f;
+      --accent-soft: #2b2447;
+      --good: #4fd398;
+      --warn: #e3a84f;
+      --mono-bg: #262133;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg: #17141f;
+    --surface: #1f1b2b;
+    --surface-2: #262133;
+    --border: #332c46;
+    --text: #eee9f8;
+    --text-mid: #b6adca;
+    --text-low: #8479a0;
+    --accent: #9a8bff;
+    --accent-ink: #17141f;
+    --accent-soft: #2b2447;
+    --good: #4fd398;
+    --warn: #e3a84f;
+    --mono-bg: #262133;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'IBM Plex Sans', system-ui, sans-serif;
+    margin:0;
+    padding-inline:20px;
+    padding-block:0 48px;
+    line-height:1.55;
+  }
+  a{color:var(--accent);}
+  .wrap{max-width:920px;margin:0 auto;}
+
+  /* ---------- Cover ---------- */
+  .cover{
+    padding-block:56px 40px;
+    border-bottom:1px solid var(--border);
+  }
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--accent);
+    background:var(--accent-soft);
+    padding:5px 12px;border-radius:999px;
+    margin-bottom:20px;
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:clamp(2.1rem, 5vw, 3.1rem);
+    line-height:1.05;
+    letter-spacing:-0.01em;
+    margin:0 0 16px;
+    text-wrap:balance;
+  }
+  .lede{
+    font-size:1.1rem;
+    color:var(--text-mid);
+    max-width:60ch;
+    margin:0 0 28px;
+  }
+  .meta-row{
+    display:flex;flex-wrap:wrap;gap:10px 28px;
+    font-size:13.5px;color:var(--text-low);
+    border-top:1px solid var(--border);
+    padding-top:20px;
+  }
+  .meta-row div{display:flex;flex-direction:column;gap:2px;}
+  .meta-row span{color:var(--text);font-weight:600;}
+  .meta-row code{
+    font-family:'IBM Plex Mono',monospace;font-size:12.5px;
+    background:var(--mono-bg);padding:2px 6px;border-radius:5px;color:var(--text);
+  }
+
+  /* ---------- TOC ---------- */
+  nav.toc{
+    margin:36px 0 0;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:22px 24px;
+    box-shadow:var(--shadow);
+  }
+  nav.toc h2{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--text-low);margin:0 0 14px;
+  }
+  .toc-grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+    gap:6px 24px;
+    list-style:none;margin:0;padding:0;
+    font-size:14.5px;
+  }
+  .toc-grid li{border-bottom:1px dashed var(--border);}
+  .toc-grid a{
+    display:flex;justify-content:space-between;gap:10px;
+    padding:9px 0;text-decoration:none;color:var(--text);
+  }
+  .toc-grid a:hover{color:var(--accent);}
+  .toc-grid .n{
+    font-family:'IBM Plex Mono',monospace;color:var(--accent);font-size:12.5px;flex:none;
+  }
+  .toc-grid .status{font-size:11.5px;color:var(--text-low);flex:none;}
+  .toc-grid .status.partial{color:var(--warn);}
+
+  /* ---------- Sections ---------- */
+  section.flow{
+    padding-block:52px;
+    border-bottom:1px solid var(--border);
+    scroll-margin-top:20px;
+  }
+  section.flow:last-of-type{border-bottom:none;}
+  .flow-head{
+    display:flex;align-items:baseline;gap:14px;margin-bottom:6px;flex-wrap:wrap;
+  }
+  .flow-num{
+    font-family:'IBM Plex Mono',monospace;color:var(--accent);font-size:14px;
+  }
+  h2{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.7rem;
+    margin:0;
+    text-wrap:balance;
+  }
+  .status-badge{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.04em;text-transform:uppercase;
+    padding:3px 10px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent);
+    margin-left:auto;
+  }
+  .status-badge.partial{background:rgba(181,113,27,0.14);color:var(--warn);}
+  section.flow > p{
+    max-width:70ch;
+    color:var(--text-mid);
+    font-size:15.5px;
+  }
+  section.flow > p strong{color:var(--text);}
+  .note{
+    max-width:70ch;
+    border-left:3px solid var(--warn);
+    background:rgba(181,113,27,0.08);
+    padding:12px 16px;border-radius:0 10px 10px 0;
+    font-size:14px;color:var(--text-mid);
+    margin:18px 0;
+  }
+  .note strong{color:var(--warn);}
+
+  .shots{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    gap:20px;
+    align-items:start;
+    margin-top:26px;
+  }
+  figure{
+    margin:0;background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;overflow:hidden;
+    box-shadow:var(--shadow);
+    display:flex;flex-direction:column;
+  }
+  /* Las capturas del emulador son 1080x2424 (≈9:20). Se muestran completas,
+     sin aspect-ratio fijo: recortarlas escondía justo los números del desglose. */
+  figure img{
+    width:100%;height:auto;display:block;
+    background:var(--surface-2);
+  }
+  figcaption{
+    padding:12px 14px 14px;
+    font-size:12.8px;
+    color:var(--text-mid);
+    line-height:1.45;
+  }
+  figcaption b{display:block;color:var(--text);font-size:13.3px;margin-bottom:2px;}
+
+  /* Capturas destacadas: la pantalla a un costado y su explicación al lado,
+     en vez de estirar una captura vertical a todo lo ancho. */
+  .wide{grid-column:1/-1;flex-direction:row;align-items:stretch;}
+  .wide img{width:min(42%,300px);flex:none;object-fit:contain;object-position:top;border-right:1px solid var(--border);}
+  .wide figcaption{padding:22px 24px;font-size:14.2px;align-self:center;}
+  .wide figcaption b{font-size:15px;margin-bottom:6px;}
+  @media (max-width:560px){
+    .wide{flex-direction:column;}
+    .wide img{width:100%;border-right:none;border-bottom:1px solid var(--border);}
+    .wide figcaption{padding:12px 14px 14px;font-size:12.8px;}
+  }
+
+  table.compare{
+    width:100%;border-collapse:collapse;margin-top:24px;font-size:14px;
+  }
+  table.compare caption{
+    text-align:left;font-family:'IBM Plex Mono',monospace;font-size:12px;
+    color:var(--text-low);letter-spacing:.04em;margin-bottom:10px;
+  }
+  table.compare th, table.compare td{
+    padding:10px 12px;border-bottom:1px solid var(--border);
+    text-align:right;font-variant-numeric:tabular-nums;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  table.compare th:first-child, table.compare td:first-child{
+    text-align:left;font-family:'IBM Plex Sans',system-ui,sans-serif;
+  }
+  table.compare thead th{
+    color:var(--text-low);font-weight:500;font-size:12.5px;
+    border-bottom:1.5px solid var(--border);
+  }
+  table.compare tr.delta td{
+    border-bottom:none;border-top:1.5px solid var(--border);
+    font-weight:600;color:var(--accent);padding-top:13px;
+  }
+  .table-scroll{overflow-x:auto;}
+
+  .price-list{
+    display:flex;flex-wrap:wrap;gap:10px;
+    margin:16px 0 0;
+    font-family:'IBM Plex Mono',monospace;font-size:13px;
+  }
+  .price-list span{
+    background:var(--mono-bg);
+    border-radius:8px;padding:6px 10px;
+    color:var(--text);
+  }
+
+  /* ---------- footer ---------- */
+  footer{
+    padding-block:44px 10px;
+    color:var(--text-low);
+    font-size:13px;
+    max-width:70ch;
+  }
+  footer a{color:var(--text-mid);}
+
+  @media (max-width:640px){
+    .cover{padding-top:36px;}
+    section.flow{padding-block:38px;}
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="cover">
+    <span class="kicker">Manual de usuario · WallLogic</span>
+    <h1>Cotización inteligente de tablaroca, de cero a tu primera cotización</h1>
+    <p class="lede">Una guía paso a paso, navegada a mano en producción con una cuenta de demostración nueva: crear cuenta, configurar precios reales, y cotizar desde un muro suelto hasta un cuarto completo con puertas, ventanas y salidas eléctricas — llegando hasta donde cada flujo se puede demostrar honestamente.</p>
+    <div class="meta-row">
+      <div>App <span>WallLogic · cotizador_mobile (Flutter)</span></div>
+      <div>Entorno <span>Producción — <code>cotizador.mictlan-labs.com</code></span></div>
+      <div>Cuenta demo <span><code>tutorial-walllogic@mictlan-labs.com</code></span></div>
+      <div>Fecha <span>22 de septiembre de 2026</span></div>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="Tabla de contenido">
+    <h2>En este manual</h2>
+    <ul class="toc-grid">
+      <li><a href="#crear-cuenta"><span><span class="n">01</span> Crear cuenta</span></a></li>
+      <li><a href="#iniciar-sesion"><span><span class="n">02</span> Iniciar sesión</span></a></li>
+      <li><a href="#primer-vistazo"><span><span class="n">03</span> Primer vistazo</span></a></li>
+      <li><a href="#configuracion"><span><span class="n">04</span> Configuración</span></a></li>
+      <li><a href="#crear-proyecto"><span><span class="n">05</span> Crear un proyecto</span></a></li>
+      <li><a href="#cotizar-muro"><span><span class="n">06</span> Cotizar un muro</span></a></li>
+      <li><a href="#cotizar-closet"><span><span class="n">07</span> Cotizar un closet</span></a></li>
+      <li><a href="#detalle-pdf"><span><span class="n">08</span> Detalle y PDF</span></a></li>
+      <li><a href="#analisis-ia"><span><span class="n">09</span> Análisis por foto/IA</span><span class="status partial">parcial</span></a></li>
+      <li><a href="#perfil"><span><span class="n">10</span> Perfil</span></a></li>
+      <li><a href="#suscripcion"><span><span class="n">11</span> Suscripción / Paywall</span><span class="status partial">parcial</span></a></li>
+      <li><a href="#idioma"><span><span class="n">12</span> Idioma y unidades</span></a></li>
+      <li><a href="#doble-altura"><span><span class="n">13</span> Muro de doble altura</span></a></li>
+      <li><a href="#cuarto-completo"><span><span class="n">14</span> Cuarto completo</span></a></li>
+      <li><a href="#corrediza"><span><span class="n">15</span> Puerta corrediza</span></a></li>
+      <li><a href="#borrar-cotizacion"><span><span class="n">16</span> Borrar una cotización</span></a></li>
+    </ul>
+  </nav>
+
+  <!-- 01 -->
+  <section class="flow" id="crear-cuenta">
+    <div class="flow-head"><span class="flow-num">01</span><h2>Crear cuenta</h2><span class="status-badge">completo</span></div>
+    <p>El usuario nuevo llega a la pantalla de <strong>Login</strong> y toca <strong>"Crear cuenta"</strong>. El formulario pide nombre completo, correo, contraseña y confirmación. El botón permanece gris hasta que las cuatro validaciones pasan, y se vuelve azul cuando el formulario es válido. Se capturó con los datos reales de la cuenta de demostración — nombre "Tutorial WallLogic", correo <code>tutorial-walllogic@mictlan-labs.com</code>.</p>
+    <div class="shots">
+      <figure><img src="/_blob/a63b6fb602c6f9122b590a3c506b480e" alt="Pantalla de login vacía"><figcaption><b>Pantalla de login</b>Punto de entrada. Botón "Crear cuenta" debajo del formulario.</figcaption></figure>
+      <figure><img src="/_blob/27b5fcfbe6327999c53590742b6cc4ce" alt="Formulario de registro lleno"><figcaption><b>Registro completo</b>Nombre, correo y contraseña capturados; botón "Crear cuenta" habilitado en azul.</figcaption></figure>
+      <figure><img src="/_blob/38ad321b8c82112c1295eba1d7ac327f" alt="Proyectos vacío tras crear cuenta"><figcaption><b>Cuenta creada</b>Tras registrar, la app entra directo a Proyectos — confirma que el registro fue real contra producción.</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="flow" id="iniciar-sesion">
+    <div class="flow-head"><span class="flow-num">02</span><h2>Iniciar sesión</h2><span class="status-badge">completo</span></div>
+    <p>Para demostrar el login real (no solo la sesión que queda abierta tras registrarse), se cerró sesión desde <strong>Mi perfil → Cerrar sesión</strong> y se volvió a entrar con el mismo correo y contraseña. El botón "Iniciar sesión" también se mantiene deshabilitado hasta que ambos campos son válidos.</p>
+    <div class="shots">
+      <figure><img src="/_blob/489a4b373b684ef1a871bb0fa354456f" alt="Sesión cerrada, pantalla de login"><figcaption><b>Sesión cerrada</b>Tras confirmar "Cerrar sesión", la app regresa a Login limpio.</figcaption></figure>
+      <figure><img src="/_blob/baa75f77636e8e2fe3ce6103dccf6187" alt="Login lleno con credenciales de la cuenta demo"><figcaption><b>Login lleno</b>Correo y contraseña de la cuenta demo capturados, botón habilitado.</figcaption></figure>
+      <figure><img src="/_blob/c22c19486bcaf773ee1ea72be827d21a" alt="Login exitoso, proyectos vacío"><figcaption><b>Login confirmado</b>Autenticación real contra producción; de vuelta en Proyectos.</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="flow" id="primer-vistazo">
+    <div class="flow-head"><span class="flow-num">03</span><h2>Primer vistazo</h2><span class="status-badge">completo</span></div>
+    <p>El estado inicial de una cuenta nueva: ícono de carpeta, "Aún no tienes proyectos", y un botón para crear el primero. La barra superior siempre muestra el plan actual (badge <strong>Free</strong>), configuración, cambio de tema y perfil. En el plan Free aparece también un banner publicitario — desaparece al pasar a Pro.</p>
+    <div class="shots">
+      <figure class="wide"><img src="/_blob/38ad321b8c82112c1295eba1d7ac327f" alt="Pantalla de Proyectos vacía en una cuenta nueva"><figcaption><b>Proyectos, cuenta nueva</b>El punto de partida de cualquier usuario: sin proyectos, con el badge "Free" arriba y el banner publicitario del plan gratuito abajo. Todo lo demás en este manual sale de aquí.</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="flow" id="configuracion">
+    <div class="flow-head"><span class="flow-num">04</span><h2>Configuración</h2><span class="status-badge">completo</span></div>
+    <p>Más de 12 secciones expandibles controlan cada número que entra en una cotización. Se recorrieron todas: idioma, país, unidad de medida, precios de paneles y perfiles, pijas, consumibles, desperdicio, rendimientos, márgenes, catálogo de perfiles, tabla de alturas límite, costo de equipo de acceso, reglas del bastidor y dimensiones comerciales.</p>
+    <div class="note"><strong>Dato real, no inventado:</strong> el catálogo de perfiles viene precargado con precios públicos de Home Depot México, con fecha de captura visible en la propia app (21 sep 2026). La tabla de alturas límite cita su fuente: Manual Técnico Tablaroca de USG México, p. 24.</div>
+    <div class="shots">
+      <figure><img src="/_blob/288783d0a7be868f3f1e018e1ed7d667" alt="Selector de país confirmado en México"><figcaption><b>País: México</b>Define moneda, calibre y precios de referencia. Cambiar país pide confirmación explícita.</figcaption></figure>
+      <figure><img src="/_blob/59d9eb3c802f3ebfa055c7ffba82cf1c" alt="Sección de márgenes y catálogo"><figcaption><b>Márgenes</b>Mano de obra 35%, Indirectos 10%, Utilidad 20% — de fábrica, editables.</figcaption></figure>
+      <figure><img src="/_blob/faa77665af9710891b3a5cb925cb08c4" alt="Catálogo de perfiles con precios reales"><figcaption><b>Catálogo de perfiles</b>Postes y canales por ancho/calibre/largo, con precios reales de Home Depot México.</figcaption></figure>
+      <figure><img src="/_blob/2a4d524a84d15231b8390fee3a5bd56a" alt="Tabla de alturas límite"><figcaption><b>Tabla de alturas límite</b>28 renglones de fábrica según USG México; elige el poste correcto por altura y arriostramiento.</figcaption></figure>
+      <figure><img src="/_blob/554a3253865aaf079f91d49c361a750d" alt="Costo de equipo de acceso vacío"><figcaption><b>Equipo de acceso</b>Vacío de fábrica — no hay tarifa universal. El usuario captura sus propios rangos.</figcaption></figure>
+    </div>
+    <div class="price-list">
+      <span>Yeso Estándar $280</span>
+      <span>Yeso RH $320</span>
+      <span>Yeso RF $350</span>
+      <span>Poste 6.35cm cal.26 $59</span>
+      <span>Mano de obra 35%</span>
+      <span>Utilidad 20%</span>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="flow" id="crear-proyecto">
+    <div class="flow-head"><span class="flow-num">05</span><h2>Crear un proyecto</h2><span class="status-badge">completo</span></div>
+    <p>Desde Proyectos, "+ Crear primer proyecto" abre un diálogo con un solo campo: nombre. Se escribió <strong>"Remodelación Oficina Roma Norte"</strong> — el tipo de nombre que un instalador real escribiría. Al abrirlo, el detalle muestra Editar/Eliminar, un contador de cotizaciones y tres accesos: Closet, Muro y Analizar foto con IA.</p>
+    <div class="shots">
+      <figure><img src="/_blob/e7b652b0ce34de69e45be7af996ae305" alt="Diálogo nuevo proyecto con nombre lleno"><figcaption><b>Nombrar el proyecto</b>"Remodelación Oficina Roma Norte" capturado, botón Crear habilitado.</figcaption></figure>
+      <figure><img src="/_blob/78f9da44317cb6af37d273cadfcb2c70" alt="Proyecto creado en la lista"><figcaption><b>Proyecto creado</b>Aparece de inmediato en la lista con su fecha.</figcaption></figure>
+      <figure><img src="/_blob/805e1e09761aee9830d6f8f62fe290e0" alt="Detalle del proyecto sin cotizaciones"><figcaption><b>Detalle del proyecto</b>Sin cotizaciones todavía; accesos a Closet, Muro y Analizar foto con IA.</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- 06 -->
+  <section class="flow" id="cotizar-muro">
+    <div class="flow-head"><span class="flow-num">06</span><h2>Cotizar un muro</h2><span class="status-badge">completo</span></div>
+    <p>Se capturó un muro realista de oficina: <strong>6.20 m × 2.70 m</strong>, 2 caras, variante Puerta. En cuanto hay ancho y alto aparece una tarjeta <strong>"Total estimado en vivo"</strong> que se recalcula con cada cambio, con desglose de Materiales, Mano de obra, Indirectos y Utilidad, más un dibujo del bastidor que marca en ámbar el hueco de la puerta.</p>
+    <div class="shots">
+      <figure><img src="/_blob/f8b6cd933f74a10f28705df3560cbd5e" alt="Formulario de muro recién agregado"><figcaption><b>Agregar muro</b>Nombre, ancho, alto, cantidad, caras, variante, tipo de muro y ancho de poste.</figcaption></figure>
+      <figure><img src="/_blob/ba39fce17a5c5958b3d9851efeedc9f8" alt="Muro con dimensiones capturadas"><figcaption><b>Dimensiones capturadas</b>6.20 × 2.70 m — el total en vivo aparece de inmediato.</figcaption></figure>
+      <figure class="wide"><img src="/_blob/1f874141cb978e750de59de6485bcf8f" alt="Desglose de costos en vivo con diagrama de bastidor"><figcaption><b>Desglose en vivo + trazo del bastidor</b>$12,526.26 MXN con Materiales, Mano de obra, Indirectos y Utilidad. El diagrama marca en ámbar el hueco de la puerta acomodado por el sistema, con la fuente normativa citada.</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- 07 -->
+  <section class="flow" id="cotizar-closet">
+    <div class="flow-head"><span class="flow-num">07</span><h2>Cotizar un closet</h2><span class="status-badge">completo</span></div>
+    <p>El closet es un flujo independiente del de muros: primero material y grosor a nivel de todo el closet, luego <strong>paneles</strong> individuales con Nombre, Ancho, Alto, Cantidad, Caras y <strong>Tipo de carga</strong> (Ligera/Media/Pesada/Muy pesada) — pensado para lo que va a colgar del panel. Se capturó un panel de 1.20 × 2.40 m, 2 caras, carga Media.</p>
+    <div class="shots">
+      <figure><img src="/_blob/5ee7f1c7433f0066d1c006df25dbc97e" alt="Cotizar closet, pantalla inicial"><figcaption><b>Cotizar closet</b>Material, grosor y lista de paneles — vacía al empezar.</figcaption></figure>
+      <figure><img src="/_blob/a1320545e97abc9af50f1d725aa78938" alt="Panel de closet lleno con tipo de carga"><figcaption><b>Panel capturado</b>1.20 × 2.40 m, 2 caras, tipo de carga Media, sin refuerzo de marco.</figcaption></figure>
+      <figure><img src="/_blob/dd43aa93979563c0588388020462085a" alt="Total en vivo del closet"><figcaption><b>Total en vivo</b>$3,201.60 MXN — 5.76 m², 3 paneles, 5 postes, 2 rieles.</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- 08 -->
+  <section class="flow" id="detalle-pdf">
+    <div class="flow-head"><span class="flow-num">08</span><h2>Guardar y ver el detalle</h2><span class="status-badge">completo</span></div>
+    <p>El proyecto terminó con dos cotizaciones guardadas: Muro v1 ($12,526.26) y Closet v2 ($3,201.60). El detalle persistido de cada una repite el desglose de costos exacto de la vista en vivo, agrega tarjetas de Área total / Paneles / Postes / Rieles, y una card de exportación con un aviso claro de por qué los subtotales del PDF se ven distintos a los de esta pantalla (el PDF ya incluye indirectos y utilidad dentro de materiales/mano de obra) aunque el total final es el mismo.</p>
+    <div class="shots">
+      <figure><img src="/_blob/9ad31b3711ee717dfac08074c5755008" alt="Proyecto con dos cotizaciones guardadas"><figcaption><b>Dos cotizaciones</b>Muro y Closet, cada una con su versión, m² y total.</figcaption></figure>
+      <figure><img src="/_blob/67613a016c6a93480dc3144c589bf7b1" alt="Detalle de cotización con desglose de costos"><figcaption><b>Desglose persistido</b>Subtotal materiales, mano de obra, indirectos, utilidad y total — idéntico a la vista en vivo.</figcaption></figure>
+      <figure><img src="/_blob/081738d790f45a23a1881c2ef0b1f27f" alt="Card de exportación a PDF"><figcaption><b>Cotización en PDF</b>Descarga, comparte por WhatsApp, email o imprime, con nota aclaratoria de los subtotales.</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- 09 -->
+  <section class="flow" id="analisis-ia">
+    <div class="flow-head"><span class="flow-num">09</span><h2>Análisis por foto/IA</h2><span class="status-badge partial">parcial</span></div>
+    <p>Es un flujo real de detección: el usuario elige Muro o Closet, toma o sube una foto, y la IA intenta detectar dimensiones aproximadas. La pantalla confirma la cuota del plan Free ("incluye 10 análisis IA al mes") y advierte que el análisis puede tardar hasta 30 segundos. Según el resultado, cada muro/panel detectado aparece con checkbox, score de confianza, y un botón para pre-llenar el formulario de Cotizar con esas medidas.</p>
+    <div class="note"><strong>No se pudo completar:</strong> ni la Cámara ni la Galería del emulador abrieron un selector de imagen visible al tocarlos — el AVD usado no tiene una app de cámara ni imágenes de galería disponibles. El flujo se documenta hasta la pantalla de captura, confirmada real; no se simuló una detección.</div>
+    <div class="shots">
+      <figure class="wide"><img src="/_blob/1d36720ca95612ee45ea22da180632a8" alt="Pantalla de captura para análisis con IA"><figcaption><b>Analizar con IA</b>Selector Muro/Closet, botones Cámara y Galería, y la cuota del plan Free visible en pantalla ("incluye 10 análisis IA al mes"). Desde aquí, una foto pre-llena el formulario de Cotizar con las medidas detectadas.</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- 10 -->
+  <section class="flow" id="perfil">
+    <div class="flow-head"><span class="flow-num">10</span><h2>Perfil</h2><span class="status-badge">completo</span></div>
+    <p>Muestra avatar con iniciales, nombre y correo de la cuenta, badges de rol ("instalador") y plan ("Free"); una sección de datos editables (nombre, correo, cambiar contraseña, rol); una sección de suscripción con enlace directo a mejorar a Pro; y accesos directos a Configuración y al cambio de tema.</p>
+    <div class="shots">
+      <figure class="wide"><img src="/_blob/a43ae2c9948d0bbabdddf015d79f6dcb" alt="Pantalla de Mi perfil completa"><figcaption><b>Mi perfil</b>Cuenta de demostración "Tutorial WallLogic", plan Free, rol instalador, y accesos a Configuración y Suscripción.</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- 11 -->
+  <section class="flow" id="suscripcion">
+    <div class="flow-head"><span class="flow-num">11</span><h2>Suscripción / Paywall</h2><span class="status-badge partial">parcial</span></div>
+    <p>Desde el badge "Free" o desde "Plan Free" en el perfil se llega a Suscripción Pro: $199 MXN/mes, sin anuncios, 200 análisis IA al mes, PDF compartible + branding, soporte prioritario. Al tocar "Suscribirme", la app llama de verdad al backend de producción para crear la intención de suscripción.</p>
+    <div class="note"><strong>Aquí termina lo que se puede demostrar sin un pago real:</strong> el botón queda en "Abriendo checkout..." de forma indefinida porque intenta abrir MercadoPago en un navegador externo, y este emulador no tiene uno que resuelva ese intent. Es el muro de pago genuino — no se simuló pasar de él.</div>
+    <div class="shots">
+      <figure><img src="/_blob/f79e7b0c7511238452a8ba2fed2b24f1" alt="Pantalla de Suscripción Pro con el plan mensual"><figcaption><b>Suscripción Pro</b>Plan Pro Mensual, $199 MXN/mes, con sus 4 beneficios.</figcaption></figure>
+      <figure><img src="/_blob/863a03c73d888345c62f784f31a75800" alt="Botón atorado en Abriendo checkout"><figcaption><b>Abriendo checkout…</b>Intento real de checkout externo de MercadoPago — el límite honesto de esta demo.</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- 12 -->
+  <section class="flow" id="idioma">
+    <div class="flow-head"><span class="flow-num">12</span><h2>Idioma y unidades</h2><span class="status-badge">completo</span></div>
+    <p>Configuración tiene un selector Automático/Español/English que traduce toda la app al instante — nombres de materiales incluidos ("Yeso Estándar" ↔ "Standard drywall") — y un selector de unidad m/cm/" que cambia cómo se capturan las medidas en Cotizar y en Configuración. Ambos confirmados reales en pantalla, sirviendo tanto a México como a Estados Unidos.</p>
+    <div class="shots">
+      <figure class="wide"><img src="/_blob/541759da68464c5c01ff95d74201c1d8" alt="Configuración completa en inglés"><figcaption><b>Cambio a English</b>Toda la interfaz traducida al instante, incluido el catálogo de materiales: los mismos renglones de Configuración que antes decían "Yeso Estándar" ahora dicen "Standard drywall", sin reiniciar la app ni perder los datos capturados.</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- 13 -->
+  <section class="flow" id="doble-altura">
+    <div class="flow-head"><span class="flow-num">13</span><h2>Muro de doble altura</h2><span class="status-badge">completo</span></div>
+    <p>El poste más largo del catálogo mide <strong>3.05 m</strong>. Cuando el muro es más alto, la app no se rinde ni inventa un perfil: cotiza con <strong>postes empalmados</strong> y lo explica en pantalla — traslape de 0.20 m, dos tornillos en cada patín, y alternando la altura del traslape entre postes vecinos para que las uniones no queden alineadas, citando el Manual Técnico de USG. También sugiere la salida alterna: agregar al catálogo un poste que cubra la altura de un tramo.</p>
+    <p>Este es además el caso donde el <strong>equipo de acceso</strong> deja de ser teoría. Antes de cotizar se dio de alta un andamio en Configuración (rango 4.50–9.00 m, cobertura 2 m por unidad, $800 por día × 3 días, más $1,500 de traslado y desmontaje). Con eso, un muro de <strong>4.50 × 6.00 m a dos caras</strong> cotiza en <strong>$37,836.30 MXN</strong>, con el andamio como renglón propio de $8,700 — visible y separado, no diluido dentro de los materiales.</p>
+    <div class="shots">
+      <figure><img src="/_blob/6407349bd0171c413ab82d158538f47d" alt="Diálogo de alta de un renglón de equipo de acceso"><figcaption><b>Alta del andamio</b>Los nueve campos del renglón: rango 4.50–9.00 m, $800/día × 3 días y $1,500 de traslado.</figcaption></figure>
+      <figure><img src="/_blob/e74c9ee5d9e60f7b4212515b307232a8" alt="Renglón de andamio guardado en configuración"><figcaption><b>Renglón guardado</b>Queda resumido en una línea, con su confirmación de "Cambios guardados".</figcaption></figure>
+      <figure><img src="/_blob/8362cfb15513616878711f491fd5303e" alt="Advertencia de empalme de postes a seis metros de altura"><figcaption><b>Advertencia de empalme</b>A 6 m, el poste de 3.05 m obliga a empalmar; aparece también el pill de equipo de acceso.</figcaption></figure>
+      <figure class="wide"><img src="/_blob/8d662d93d9e64941e3ff38717ea09f24" alt="Total de la cotización de doble altura con el renglón de equipo de acceso"><figcaption><b>$37,836.30 con andamio incluido</b>Materiales $16,745 · Mano de obra $5,861 · Indirectos $1,675 · Utilidad $4,856 · <strong>Equipo de acceso $8,700</strong>. 27 m², 30 postes y 4 rieles, con el trazo del bastidor mostrando los postes de piso a techo ya empalmados.</figcaption></figure>
+      <figure><img src="/_blob/d9ee0ab70ccb77aeb4c369c7d9fe011e" alt="Cotización de doble altura guardada en el proyecto"><figcaption><b>Guardada como v1</b>El muro alto queda persistido en el proyecto "Casa Muestra".</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- 14 -->
+  <section class="flow" id="cuarto-completo">
+    <div class="flow-head"><span class="flow-num">14</span><h2>Cuarto completo: huecos y salidas eléctricas</h2><span class="status-badge">completo</span></div>
+    <p>Una cotización puede llevar varios muros, así que un cuarto entero cabe en una sola. Se capturó una recámara de <strong>3.50 × 3.00 m con 2.60 m de altura</strong>, sus cuatro muros, y en cada uno lo que realmente lleva: debajo de las dimensiones, el botón <strong>"Agregar hueco"</strong> abre un renglón con cuatro tipos (Puerta, Puerta corrediza, Ventana, Perpendicular) y <strong>"Agregar eléctrico"</strong> otro con cuatro salidas (contacto, apagador, caja de paso y caja de video).</p>
+    <ul style="max-width:70ch;color:var(--text-mid);font-size:15.5px;">
+      <li><strong>Muro 1</strong> — puerta de 0.90 × 2.10 m, un apagador y un contacto.</li>
+      <li><strong>Muro 2</strong> — ventana de 1.50 × 1.20 m con antepecho de 0.90 m, dos contactos.</li>
+      <li><strong>Muro 3</strong> — dos contactos.</li>
+      <li><strong>Muro 4</strong> — un contacto y una caja de video para la TV.</li>
+    </ul>
+    <p>Total: <strong>$19,390.56 MXN</strong> por 30.11 m², 46 postes y 20 rieles. Cada salida eléctrica no es decorativa: agrega postes al bastidor según la regla configurada, igual que cada jamba.</p>
+    <div class="note"><strong>Con posición o sin ella:</strong> si el hueco se captura sin posición X, el backend lo acomoda solo y lo pinta <strong>en ámbar</strong> avisando que es una posición estimada. Si se le da la posición exacta, lo dibuja <strong>en azul</strong> donde va. En esta recámara se hizo a propósito una de cada una para que la diferencia se vea en el mismo trazo.</div>
+    <div class="shots">
+      <figure><img src="/_blob/20f0c506c954ce5bfe802e81df676665" alt="Editor de hueco tipo ventana con antepecho"><figcaption><b>Editor de hueco</b>Ventana de 1.50 × 1.20 m con posición exacta en 0.75 m; el antepecho vacío toma el valor por defecto de 0.90 m.</figcaption></figure>
+      <figure><img src="/_blob/fd6bffd484a136cbfa04a69604493d1b" alt="Muro con hueco y salidas eléctricas capturadas"><figcaption><b>Hueco y eléctricos juntos</b>El mismo muro de la ventana lleva además sus dos contactos.</figcaption></figure>
+      <figure><img src="/_blob/0e81ddb7ec566a4359c7ba591a794bd2" alt="Dropdown con los cuatro tipos de salida eléctrica"><figcaption><b>Cuatro salidas eléctricas</b>Contacto, apagador, caja de paso y salida de TV/datos.</figcaption></figure>
+      <figure><img src="/_blob/28f9593a2ee8ecb742fcbdd8259d5aee" alt="Total en vivo de la recámara completa"><figcaption><b>$19,390.56 por la recámara</b>A 2.60 m de altura avisa que ningún andamio del catálogo cubre ese rango: equipo de acceso $0.</figcaption></figure>
+      <figure class="wide"><img src="/_blob/ab8c4d1d350ef47fab0ba9814940f361" alt="Trazo del bastidor mostrando el hueco ámbar de la puerta y el azul de la ventana"><figcaption><b>Ámbar contra azul, en el mismo trazo</b>El muro de la puerta (12 postes de piso a techo y 2 tramos cortos) la pinta en ámbar porque el sistema la acomodó; el de la ventana, capturada con posición exacta, la dibuja en azul con los postes cortos del antepecho en verde. Las jambas van en morado y los rieles en naranja.</figcaption></figure>
+      <figure><img src="/_blob/af0c0d5a41865a6420702fad05f52464" alt="Los cuatro muros de la recámara dibujados"><figcaption><b>Los cuatro muros</b>Cada uno con su propio trazo y su conteo de postes.</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- 15 -->
+  <section class="flow" id="corrediza">
+    <div class="flow-head"><span class="flow-num">15</span><h2>La misma recámara con puerta corrediza</h2><span class="status-badge">completo</span></div>
+    <p>El ejercicio útil no es cotizar una corrediza, sino <strong>comparar</strong>. Se repitió la misma recámara cambiando una sola cosa: el hueco del Muro 1 pasó de puerta abatible de 0.90 m a <strong>corrediza de 1.60 m</strong>. El vano más ancho quita 1.47 m² de tablero y deja dos postes de piso a techo menos, pero obliga a un riel más y a más tramos cortos arriba del cabezal — el muro pasa de 12 postes y 2 tramos cortos a 10 postes y 4 tramos cortos.</p>
+    <div class="table-scroll">
+      <table class="compare">
+        <caption>Misma recámara de 3.50 × 3.00 m, mismo catálogo, mismos márgenes</caption>
+        <thead><tr><th>&nbsp;</th><th>Puerta abatible 0.90 m</th><th>Corrediza 1.60 m</th></tr></thead>
+        <tbody>
+          <tr><td>Total MXN</td><td>$19,390.56</td><td>$19,237.44</td></tr>
+          <tr><td>Área de tablero</td><td>30.11 m²</td><td>28.64 m²</td></tr>
+          <tr><td>Postes</td><td>46</td><td>44</td></tr>
+          <tr><td>Rieles</td><td>20</td><td>21</td></tr>
+          <tr class="delta"><td>Diferencia</td><td colspan="2">−$153.12 · −0.8% · −2 postes · +1 riel</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>La conclusión práctica para quien cotiza: <strong>una puerta corrediza no encarece el muro</strong>. Cuesta prácticamente lo mismo, y lo poco que baja viene del tablero que se deja de poner en el vano, no de un ahorro en estructura.</p>
+    <div class="shots">
+      <figure><img src="/_blob/1251f524727a3e78cb5efecef8cf395c" alt="Hueco cambiado a puerta corrediza"><figcaption><b>Cambio a corrediza</b>Mismo muro, mismo lugar: solo cambia el tipo de hueco y su ancho a 1.60 m.</figcaption></figure>
+      <figure><img src="/_blob/7647ccb559782d27d7c873e7af5e80a1" alt="Total de la recámara con puerta corrediza"><figcaption><b>$19,237.44 y 44 postes</b>Dos postes menos que con la abatible, y $153 menos de total.</figcaption></figure>
+      <figure class="wide"><img src="/_blob/c2fbaf24794c6b521be6db91478dfa5f" alt="Trazo del bastidor con el vano de la corrediza"><figcaption><b>El vano más ancho en el trazo</b>10 postes de piso a techo y 4 tramos cortos sobre el cabezal — se ve de inmediato cómo la estructura se reacomoda alrededor de un hueco casi del doble de ancho.</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- 16 -->
+  <section class="flow" id="borrar-cotizacion">
+    <div class="flow-head"><span class="flow-num">16</span><h2>Borrar una cotización</h2><span class="status-badge">completo</span></div>
+    <p>Cada renglón de la lista de cotizaciones lleva a la derecha dos íconos: un <strong>lápiz</strong> para renombrarla y un <strong>bote de basura rojo</strong> para borrarla. El de basura borra <strong>solo esa cotización</strong> y deja el proyecto y el resto intactos.</p>
+    <p>Al tocarlo aparece una confirmación que dice exactamente qué se va a borrar — el tipo, <strong>su versión</strong> y su total — y advierte que no se puede deshacer. La versión importa más de lo que parece: si cotizaste el mismo muro varias veces, los renglones se ven casi idénticos y el número de versión es lo único que los distingue.</p>
+    <p>Al confirmar, la lista se actualiza sola, el contador de arriba baja, aparece un aviso de <strong>"Cotización eliminada."</strong> y te quedas donde estabas, listo para seguir.</p>
+    <div class="note"><strong>No lo confundas con "Eliminar proyecto".</strong> Ese botón vive arriba, en la tarjeta del proyecto, y borra el <strong>proyecto completo con todas sus cotizaciones</strong>. Los dos son rojos y los dos usan un bote de basura, así que fíjate en dónde estás tocando: el de la tarjeta de arriba dice "Eliminar proyecto"; el de cada renglón no tiene texto. En ambos casos la confirmación te dice qué estás a punto de borrar — vale la pena leerla.</div>
+    <div class="shots">
+      <figure><img src="/_blob/8a12027a753fbde3eac7e8e1a27dc526" alt="Lista de cotizaciones con el ícono de bote de basura en cada renglón"><figcaption><b>Dónde está</b>Un lápiz para renombrar y un bote de basura rojo para borrar, en cada renglón.</figcaption></figure>
+      <figure><img src="/_blob/2317428c2a7bd0c8c07b57ea8e475db6" alt="Diálogo de confirmación nombrando la cotización, su versión y su total"><figcaption><b>La confirmación</b>Nombra el tipo, la versión y el total: "Se va a eliminar Muro (v10) por $3615.72".</figcaption></figure>
+      <figure class="wide"><img src="/_blob/0ba8b071e72bbe194ddec500cf605d4e" alt="Lista ya sin la cotización borrada, con el aviso Cotización eliminada"><figcaption><b>Listo</b>La lista se refresca sola —el contador pasó a "Cotizaciones (3)"— y el aviso confirma el borrado. Arriba se ve el otro botón, "Eliminar proyecto", que es el que hay que tocar con más cuidado: ese se lleva el proyecto entero.</figcaption></figure>
+    </div>
+  </section>
+
+  <footer>
+    <p>Manual generado navegando la app real contra producción con una cuenta de demostración nueva y aislada. Los proyectos "Remodelación Oficina Roma Norte" y "Casa Muestra — Recámara y Doble Altura", con sus cotizaciones, se dejaron intactos: son el contenido de este tutorial, no datos de prueba. Todas las cifras que aparecen aquí salieron de cotizaciones reales contra el backend de producción, no de ejemplos inventados. Reporte técnico completo: <code>campaign-artifacts/tutorial/walllogic-tutorial-usuario.md</code>.</p>
+  </footer>
+
+</div>
+
+</body></html>
